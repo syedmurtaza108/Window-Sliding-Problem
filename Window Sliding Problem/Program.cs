@@ -5,13 +5,13 @@ namespace Window_Sliding_Problem
 {
     class Program
     {
-        static Dictionary<char, int> list = new Dictionary<char, int>();
         static void Main(string[] args)
         {
             //Console.WriteLine(MaxSumSubArray(new int[] { 4, 2, 1, 7, 8, 1, 2, 8, 1, 0 }, 3));
             //Console.WriteLine(SmallestSubArrayGivenSum(new int[] { 4, 2, 2, 7, 8, 1, 2, 8, 1, 0 }, 8));
             //Console.WriteLine(SmallestSubArrayGivenSum(new int[] { 1, 1, 1, 1, 1, 1, 1, 1 }, 11));
             Console.WriteLine(LongestSubStringGivenDistinctCharacter("aabacbebebe", 3));
+            Console.WriteLine(LongestSubStringGivenDistinctCharacter("aaaa", 3));
             //AAAHHIBC
         }
 
@@ -53,44 +53,35 @@ namespace Window_Sliding_Problem
 
         static int LongestSubStringGivenDistinctCharacter(string s, int k)
         {
-            for (int i = 0; i < s.Length + 1; )
-            {
-                if (list.Count == k + 1)
-                {
-                    if (list.GetValueOrDefault(s[i], 1) == 1) list.RemoveAt(0);
-                    else
-                    {
-                        list.Insert(0, KeyValuePair.Create(s[0], list[0].Value - 1));
-                        list.RemoveAt(1);
-                    }
-                    continue;
-                }
 
-                if(i < s.Length)
+            int max = -1;
+            Dictionary<char, int> list = new Dictionary<char, int>();
+            int start = 0;
+
+            for (int i = 0; i < s.Length; i++)
+            {
+                list[s[i]] = list.GetValueOrDefault(s[i], 0) + 1;
+
+                while (list.Count > k)
                 {
-                    bool added = false;
-                    list.get
-                    for (int j = 0; j < list.Count; j++)
+                    char leftChar = s[start];
+
+                    list[leftChar] = list.GetValueOrDefault(leftChar) - 1;
+                    if (list.GetValueOrDefault(leftChar) == 0)
                     {
-                        if (list[j].Key == s[i])
-                        {
-                            added = true;
-                            list.Insert(j, KeyValuePair.Create(s[i], list[j].Value + 1));
-                            list.RemoveAt(j + 1);
-                        }
+                        list.Remove(leftChar);
                     }
 
-                    if (!added) list.Add(KeyValuePair.Create(s[i], 1));
+                    start++;                
                 }
-                i++;
+
+                if (list.Count == k)
+                {
+                    max = Math.Max(max, i - start + 1);
+                }
             }
 
-            int totalLenght = 0;
-            for (int i = 0; i < list.Count; i++)
-            {
-                totalLenght += list[i].Value;
-            }
-            return totalLenght;
+            return max;
         }
     }
 }
